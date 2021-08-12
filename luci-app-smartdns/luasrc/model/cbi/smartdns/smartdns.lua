@@ -83,15 +83,6 @@ o.cfgvalue    = function(...)
     return Flag.cfgvalue(...) or "0"
 end
 
----- Domain Serve expired
-o = s:taboption("settings", Flag, "serve_expired", translate("Serve expired"), 
-	translate("Attempts to serve old responses from cache with a TTL of 0 in the response without waiting for the actual resolution to finish."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
 ---- Redirect
 o = s:taboption("settings", ListValue, "redirect", translate("Redirect"), translate("SmartDNS redirect mode"))
 o.placeholder = "none"
@@ -128,8 +119,8 @@ o.rempty      = false
 
 ---- Port
 o = s:taboption("seconddns", Value, "seconddns_port", translate("Local Port"), translate("Smartdns local server port"))
-o.placeholder = 6553
-o.default     = 6553
+o.placeholder = 7053
+o.default     = 7053
 o.datatype    = "port"
 o.rempty      = false
 
@@ -141,19 +132,19 @@ o.cfgvalue    = function(...)
     return Flag.cfgvalue(...) or "1"
 end
 
----- dns server group
-o = s:taboption("seconddns", Value, "seconddns_server_group", translate("Server Group"), translate("Query DNS through specific dns server group, such as office, home."))
-o.rmempty     = true
-o.placeholder = "default"
-o.datatype    = "hostname"
-o.rempty      = true
-
 o = s:taboption("seconddns", Flag, "seconddns_no_speed_check", translate("Skip Speed Check"), translate("Do not check speed."))
 o.rmempty     = false
 o.default     = o.disabled
 o.cfgvalue    = function(...)
     return Flag.cfgvalue(...) or "0"
 end
+
+---- dns server group
+o = s:taboption("seconddns", Value, "seconddns_server_group", translate("Server Group"), translate("Query DNS through specific dns server group, such as office, home."))
+o.rmempty     = true
+o.placeholder = "default"
+o.datatype    = "hostname"
+o.rempty      = true
 
 ---- skip address rules
 o = s:taboption("seconddns", Flag, "seconddns_no_rule_addr", translate("Skip Address Rules"), translate("Skip address rules."))
@@ -187,7 +178,7 @@ o.cfgvalue    = function(...)
     return Flag.cfgvalue(...) or "0"
 end
 
-o = s:taboption("seconddns", Flag, "seconddns_no_dualstack_selection", translate("Skip Dualstack Selection"), translate("Skip Dualstack Selection."))
+o = s:taboption("seconddns", Flag, "seconddns_no_dualstack_selection", translate("Skip Dualstack Selection"), translate("Skip Sualstack Selection."))
 o.rmempty     = false
 o.default     = o.disabled
 o.cfgvalue    = function(...)
@@ -196,14 +187,6 @@ end
 
 ---- skip cache
 o = s:taboption("seconddns", Flag, "seconddns_no_cache", translate("Skip Cache"), translate("Skip Cache."))
-o.rmempty     = false
-o.default     = o.disabled
-o.cfgvalue    = function(...)
-    return Flag.cfgvalue(...) or "0"
-end
-
----- Force AAAA SOA
-o = s:taboption("seconddns", Flag, "force_aaaa_soa", translate("Force AAAA SOA"), translate("Force AAAA SOA."))
 o.rmempty     = false
 o.default     = o.disabled
 o.cfgvalue    = function(...)
@@ -277,14 +260,13 @@ o:value("https", translate("https"))
 o.default     = "udp"
 o.rempty      = false
 
-s = m:section(TypedSection, "smartdns", translate("Advanced Settings"), translate("Advanced Settings"));
-s.anonymous = true;
-
-s:tab("domain-address", translate("Domain Address"), translate("Set Specific domain ip address."));
-s:tab("blackip-list", translate("IP Blacklist"), translate("Set Specific ip blacklist."));
-
 -- Doman addresss
-addr = s:taboption("domain-address", Value, "address",
+s = m:section(TypedSection, "smartdns", translate("Domain Address"), 
+	translate("Set Specific domain ip address."))
+s.anonymous = true
+
+---- address
+addr = s:option(Value, "address",
 	translate(""), 
 	translate("Specify an IP address to return for any host in the given domains, Queries in the domains are never forwarded and always replied to with the specified IP address which may be IPv4 or IPv6."))
 
@@ -301,7 +283,12 @@ function addr.write(self, section, value)
 end
 
 -- IP Blacklist
-addr = s:taboption("blackip-list", Value, "blacklist_ip",
+s = m:section(TypedSection, "smartdns", translate("IP Blacklist"), 
+	translate("Set Specific ip blacklist."))
+s.anonymous = true
+
+---- blacklist
+addr = s:option(Value, "blacklist_ip",
 	translate(""), 
 	translate("Configure IP blacklists that will be filtered from the results of specific DNS server."))
 
@@ -317,7 +304,7 @@ function addr.write(self, section, value)
 	nixio.fs.writefile("/etc/smartdns/blacklist-ip.conf", value)
 end
 
--- Technical Support
+-- Doman addresss
 s = m:section(TypedSection, "smartdns", translate("Technical Support"), 
 	translate("If you like this software, please buy me a cup of coffee."))
 s.anonymous = true

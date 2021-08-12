@@ -2,10 +2,20 @@
 	"luci-app-vsftpd": {
 		"description": "Grant UCI access for luci-app-vsftpd",
 		"read": {
-			"uci": [ "vsftpd" ]
+			"uci": [ "vsftpd" ],
+			"ubus": {
+				"luci": [
+					"getInitList"
+				]
+			}
 		},
 		"write": {
-			"uci": [ "vsftpd" ]
+			"uci": [ "vsftpd" ],
+			"ubus": {
+				"luci": [
+					"setInitAction"
+				]
+			}
 		}
 	}
 }
